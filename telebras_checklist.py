@@ -130,7 +130,6 @@ def _hide_streamlit_fullscreen_and_deploy_buttons() -> None:
 button[title="View fullscreen"], button[title="Fullscreen"], button[title="Exit fullscreen"] {
   display: none !important;
 }
-header, #MainMenu, footer { visibility: hidden; }
 </style>""", unsafe_allow_html=True)
 
 
@@ -311,14 +310,12 @@ html, body {
 
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
-header {visibility: hidden;}
 .stDeployButton {display: none;}
 
 /* Sidebar */
 
 /* Sticky sidebar (sistema profissional) */
 section[data-testid="stSidebar"]{
-  position: fixed !important;
   top: 0; left: 0;
   height: 100vh !important;
   width: 320px !important;
