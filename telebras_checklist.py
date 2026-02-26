@@ -2015,7 +2015,11 @@ def br_date(d: Any) -> str:
     return ""
 
 def now_str() -> str:
-    return datetime.now().strftime("%d/%m/%Y - %H:%M")
+    try:
+        from zoneinfo import ZoneInfo
+        return datetime.now(ZoneInfo("America/Sao_Paulo")).strftime("%d/%m/%Y - %H:%M")
+    except Exception:
+        return datetime.now().strftime("%d/%m/%Y - %H:%M")
 
 def yn(label: str, value: str, key: str) -> str:
     opts = ["Sim", "Não"]
