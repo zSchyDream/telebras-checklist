@@ -2697,7 +2697,7 @@ def render_category(name: str, key: str, emoji_icon: str):
     with c2:
         turno_opt = st.selectbox("Turno", ["Manhã", "Tarde", "Noite"])
     with c3:
-        responsavel_meta = st.text_input("Líder de equipe", value="", placeholder="Nome do líder", key=f"meta_resp__{key}")
+        responsavel_meta = st.text_input("Líder de equipe", value=st.session_state.get(f"meta_resp__{key}", ""), placeholder="Nome do líder", key=f"meta_resp__{key}")
     with c4:
         st.write("")
         st.write("")
