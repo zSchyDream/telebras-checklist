@@ -55,25 +55,30 @@ def _css_button_with_icon(key: str, *, icon_b64: str | None, bg: str, fg: str = 
     if not key:
         return
     hover_bg = hover_bg or bg
+    effective_pad = 0 if (inline_icon and pad_left == 0) else pad_left
 
     icon_rule = ""
     if icon_b64:
         if inline_icon:
             icon_rule = f"""
-.st-key-{key} button::before {{
+.st-key-{key} button p {{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  margin: 0 !important;
+}}
+.st-key-{key} button p::before {{
   content: "";
-  width: 24px;
-  height: 24px;
-  position: relative;
-  left: 0;
-  top: 0;
-  transform: none;
-  margin-right: 10px;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
   background-image: url('data:image/png;base64,{icon_b64}');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  opacity: 1;
+  flex-shrink: 0;
+  vertical-align: middle;
 }}
 """
         else:
@@ -107,10 +112,13 @@ def _css_button_with_icon(key: str, *, icon_b64: str | None, bg: str, fg: str = 
   font-size: {font_size}px !important;
   letter-spacing: .2px;
   box-shadow: {shadow_css} !important;
-  padding-left: {pad_left}px !important;
+  padding-left: {effective_pad}px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  text-align: center !important;
+  padding-right: 0 !important;
+  gap: 8px !important;
 }}
 .st-key-{key} button:hover {{
   background: {hover_bg} !important;
@@ -627,8 +635,8 @@ section.main,
   gap: .85rem;
 }
 .field {
-  background: rgba(246,250,255,.9);
-  border: 1px solid rgba(226,232,240,.88);
+  background: #ffffff;
+  border: 1px solid rgba(203,213,225,.78);
   border-radius: 14px;
   padding: .95rem;
 }
@@ -1469,7 +1477,124 @@ div[data-testid="stVerticalBlockBorderWrapper"] > div{
 }
 
 /* Remove qualquer resto de bloco do antigo resumo (caso CSS exista) */
-div[data-testid="stExpander"]{ border-radius: 16px !important; }
+div[data-testid="stExpander"]{
+  border-radius: 16px !important;
+  border: 1px solid rgba(15,23,42,0.08) !important;
+  background: #ffffff !important;
+  box-shadow: 0 2px 12px rgba(2,6,23,0.05) !important;
+  margin-bottom: 12px !important;
+  overflow: hidden !important;
+  transition: box-shadow .18s ease, border-color .18s ease !important;
+}
+div[data-testid="stExpander"]:hover{
+  border-color: rgba(0,114,198,0.18) !important;
+  box-shadow: 0 8px 22px rgba(2,6,23,0.08) !important;
+}
+div[data-testid="stExpander"] > div:first-child{
+  background: #f8fbff !important;
+  border-bottom: 1px solid rgba(15,23,42,0.06) !important;
+  padding: 12px 16px !important;
+}
+div[data-testid="stExpander"] > div:last-child{
+  background: #ffffff !important;
+  padding: 16px !important;
+}
+div[data-testid="stExpander"] summary svg,
+div[data-testid="stExpander"] [role="button"] svg{
+  color: #64748B !important;
+  width: 14px !important;
+  height: 14px !important;
+}
+div[data-testid="stExpander"] summary p,
+div[data-testid="stExpander"] [role="button"] p{
+  color: #0A2C4D !important;
+  font-weight: 900 !important;
+  font-size: 14px !important;
+  letter-spacing: .01em !important;
+  line-height: 1.3 !important;
+}
+
+/* Ticket card customizado */
+.tkt-card{
+  border: 1px solid rgba(11,61,121,0.12);
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(2,6,23,0.06);
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: box-shadow .18s ease, border-color .18s ease, transform .18s ease;
+}
+.tkt-card:hover{
+  box-shadow: 0 10px 30px rgba(2,6,23,0.10);
+  border-color: rgba(0,114,198,0.30);
+}
+.tkt-card[open]{
+  border-color: rgba(0,114,198,0.26);
+  box-shadow: 0 10px 30px rgba(2,6,23,0.09);
+}
+.tkt-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  cursor: pointer;
+  background: linear-gradient(180deg, #ffffff 0%, #f3f8ff 100%);
+  border-bottom: 1px solid rgba(15,23,42,0.07);
+  user-select: none;
+  gap: 14px;
+  list-style: none;
+}
+.tkt-header::-webkit-details-marker{ display:none; }
+.tkt-header:hover{ background: linear-gradient(180deg, #f8fbff 0%, #eaf3ff 100%); }
+.tkt-left{ display:flex; align-items:center; gap:12px; flex:1; min-width:0; }
+.tkt-arrow{
+  font-size: 11px;
+  color: #4B5563;
+  transition: transform .2s ease;
+  flex-shrink: 0;
+}
+.tkt-card[open] .tkt-arrow{ transform: rotate(90deg); }
+.tkt-num{
+  font-size: 18px;
+  font-weight: 900;
+  color: #0B3D79;
+  letter-spacing: .01em;
+  white-space: nowrap;
+}
+.tkt-badges{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+.tkt-badge{
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+.tkt-badge-open   { background:#E0F2FE; color:#075985; border-color:#BAE6FD; }
+.tkt-badge-progress{ background:#FEF3C7; color:#92400E; border-color:#FDE68A; }
+.tkt-badge-closed { background:#DCFCE7; color:#166534; border-color:#BBF7D0; }
+.tkt-badge-alta   { background:#FEE2E2; color:#991B1B; border-color:#FECACA; }
+.tkt-badge-critica { background:#7F1D1D; color:#FFFFFF; border-color:#991B1B; }
+.tkt-badge-media  { background:#FEF3C7; color:#92400E; border-color:#FDE68A; }
+.tkt-badge-baixa  { background:#E0F2FE; color:#075985; border-color:#BAE6FD; }
+.tkt-meta{
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex-shrink: 0;
+}
+.tkt-meta-item{
+  font-size: 12px;
+  color: #475569;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.tkt-body{
+  padding: 18px;
+  background: #fcfdff;
+}
 
 
     /* --- Tickets por Categoria (Leaderboard) --- */
@@ -1781,7 +1906,7 @@ def category_icon_inline_html(category_key: str, fallback_emoji: str) -> str:
 DB_PATH = str(Path(__file__).resolve().with_name("telebras_checklist.db"))
 
 STATUS_OPTS = ["Aberto", "Em andamento", "Fechado"]
-CRIT_OPTS = ["Baixa", "Média", "Alta"]
+CRIT_OPTS = ["Baixa", "Média", "Alta", "Crítica"]
 
 # -------------------------
 # Category-specific forms (edit freely)
@@ -2043,6 +2168,8 @@ def badge_status_class(status: str) -> str:
 
 def badge_crit_class(crit: str) -> str:
     c = (crit or "Média").lower()
+    if "crítica" in c or "critica" in c:
+        return "badge-critica"
     if "alta" in c:
         return "badge-alta"
     if "baixa" in c:
@@ -2435,6 +2562,146 @@ def gerar_pdf_categoria(conn: sqlite3.Connection, category: str, titulo: str, me
     doc.build(elements)
     return buffer.getvalue()
 
+def gerar_pdf_geral(conn: sqlite3.Connection) -> bytes:
+    styles = getSampleStyleSheet()
+    logo_bytes = get_telebras_logo_bytes()
+
+    cell_style = styles["BodyText"].clone("cell_style_geral")
+    cell_style.fontName = "Helvetica"
+    cell_style.fontSize = 9
+    cell_style.leading = 11
+    try:
+        cell_style.wordWrap = "CJK"
+    except Exception:
+        pass
+
+    key_style = styles["BodyText"].clone("key_style_geral")
+    key_style.fontName = "Helvetica-Bold"
+    key_style.fontSize = 9
+    key_style.leading = 11
+    try:
+        key_style.wordWrap = "CJK"
+    except Exception:
+        pass
+
+    def _esc(s: Any) -> str:
+        txt = "" if s is None else str(s)
+        return (
+            txt.replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace("\n", "<br/>")
+        )
+
+    def P(txt: Any) -> Paragraph:
+        return Paragraph(_esc(txt), cell_style)
+
+    def K(txt: Any) -> Paragraph:
+        return Paragraph(_esc(txt), key_style)
+
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=36, leftMargin=36, topMargin=36, bottomMargin=36)
+    elements: List[Any] = []
+
+    try:
+        img = RLImage(BytesIO(logo_bytes))
+        max_w, max_h = 320, 60
+        try:
+            from PIL import Image as PILImage
+            im = PILImage.open(BytesIO(logo_bytes))
+            w, h = im.size
+            if w and h:
+                scale = min(max_w / float(w), max_h / float(h))
+                img.drawWidth = float(w) * scale
+                img.drawHeight = float(h) * scale
+            else:
+                img.drawWidth, img.drawHeight = max_w, max_h
+        except Exception:
+            img.drawWidth, img.drawHeight = max_w, max_h
+        img.hAlign = "LEFT"
+        header_tbl = Table([[img, Paragraph("Relatório Geral", styles["Title"])]], colWidths=[320, 203])
+        header_tbl.setStyle(TableStyle([
+            ("VALIGN", (0,0), (-1,-1), "MIDDLE"),
+            ("LEFTPADDING", (0,0), (-1,-1), 0),
+            ("RIGHTPADDING", (0,0), (-1,-1), 0),
+            ("TOPPADDING", (0,0), (-1,-1), 0),
+            ("BOTTOMPADDING", (0,0), (-1,-1), 0),
+        ]))
+        elements.append(header_tbl)
+    except Exception:
+        elements.append(Paragraph("Relatório Geral", styles["Title"]))
+    elements.append(Spacer(1, 12))
+    elements.append(Paragraph(f"<b>Gerado em:</b> {now_str()}", styles["Normal"]))
+    elements.append(Spacer(1, 12))
+
+    categories = [(name, key) for name, key, _ in CATEGORIES if key != "dashboard"]
+    has_any = False
+
+    for name, key in categories:
+        tickets = fetch_tickets(conn, key)
+        if not tickets:
+            continue
+        has_any = True
+
+        elements.append(Paragraph(f"<b>{name}</b>", styles["Heading2"]))
+        elements.append(Spacer(1, 6))
+
+        sep = Table([[""]], colWidths=[523])
+        sep.setStyle(TableStyle([
+            ("LINEBELOW", (0,0), (-1,-1), 0.8, colors.HexColor("#D7E3F4")),
+            ("BOTTOMPADDING", (0,0), (-1,-1), 2),
+        ]))
+        elements.append(sep)
+        elements.append(Spacer(1, 8))
+
+        for t in tickets:
+            extra = t.get("extra") or {}
+            responsavel = (
+                ((extra.get("analista") if isinstance(extra, dict) else "") or "").strip()
+                or ((extra.get("responsavel") if isinstance(extra, dict) else "") or "").strip()
+                or (t.get("analista") or "").strip()
+                or (t.get("responsavel") or "").strip()
+                or "-"
+            )
+
+            checks = [
+                f"Critérios: {t.get('criterios', 'Sim')}",
+                f"Política: {t.get('politica', 'Sim')}",
+                f"Correlatos: {t.get('correlatos', 'Sim')}",
+            ]
+
+            rows = [
+                [K("Número"), P(t.get("ticket_number") or "-")],
+                [K("Status"), P(t.get("status") or "Aberto")],
+                [K("Prioridade"), P((str(extra.get("criticidade") or "").strip() or t.get("criticidade") or "Média"))],
+                [K("Responsável"), P(responsavel)],
+                [K("Data/Hora"), P(t.get("created_at") or "-")],
+                [K("Checks"), P(" | ".join(checks))],
+                [K("Observações"), P(t.get("observacoes") or "-")],
+            ]
+            tbl = Table(rows, colWidths=[140, 360])
+            tbl.setStyle(TableStyle([
+                ("BACKGROUND", (0, 0), (-1, 0), colors.whitesmoke),
+                ("BOX", (0, 0), (-1, -1), 0.6, colors.lightgrey),
+                ("INNERGRID", (0, 0), (-1, -1), 0.25, colors.lightgrey),
+                ("FONTNAME", (0, 0), (-1, -1), "Helvetica"),
+                ("FONTSIZE", (0, 0), (-1, -1), 9),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("LEFTPADDING", (0, 0), (-1, -1), 6),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+                ("TOPPADDING", (0, 0), (-1, -1), 4),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                ("WORDWRAP", (0, 0), (-1, -1), "CJK"),
+            ]))
+            elements.append(tbl)
+            elements.append(Spacer(1, 12))
+
+    if not has_any:
+        elements.append(Paragraph("Nenhum ticket registrado nas categorias disponíveis.", styles["Normal"]))
+
+    doc.build(elements)
+    return buffer.getvalue()
+
 # -------------------------
 # Sidebar Navigation
 # -------------------------
@@ -2464,6 +2731,21 @@ with st.sidebar:
             st.session_state[f"show_new__{key}"] = False
             st.session_state[f"editing_id__{key}"] = None
             st.rerun()
+
+    # Separador + botão de exportação geral no rodapé da sidebar
+    st.markdown("<div style='flex:1'></div>", unsafe_allow_html=True)
+    st.markdown("<hr style='border-color:rgba(255,255,255,0.1);margin:16px 0 12px 0;'>", unsafe_allow_html=True)
+
+    conn_sidebar = init_db()
+    pdf_geral = gerar_pdf_geral(conn_sidebar)
+    st.download_button(
+        label="📊 Exportar Relatório Geral",
+        data=pdf_geral,
+        file_name=f"relatorio_geral_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf",
+        mime="application/pdf",
+        use_container_width=True,
+        key="sidebar_export_geral"
+    )
 
     # (Removido) seção de dica/ícones — deixamos o menu mais limpo e minimalista.
 
@@ -2814,8 +3096,7 @@ def render_category(name: str, key: str, emoji_icon: str):
         _id_hint = (defaults.get("ticket_number") or defaults.get("id_estacao") or defaults.get("equipamento") or "").strip()
         base_key = f"{key}__{'edit' if is_edit else 'new'}__{_id_hint}".replace(" ", "_")
         st.markdown(
-            f"<div style='font-weight:950;font-size:18px;color:var(--ink);margin-bottom:.25rem;'>{submit_label}</div>"
-            f"<div style='color:var(--muted);font-weight:600;margin-bottom:1rem;'>Preencha os campos e salve</div>",
+            f"<div style='font-weight:950;font-size:18px;color:var(--ink);margin-bottom:.25rem;'>{submit_label}</div>",
             unsafe_allow_html=True,
         )
         with st.container():  # sem st.form (remove dica Ctrl+Enter)
@@ -2833,7 +3114,15 @@ def render_category(name: str, key: str, emoji_icon: str):
                 )
                 # Campos internos (não exibidos) para manter compatibilidade com o banco/relatórios
                 status = defaults.get("status", "Aberto")
-                criticidade = defaults.get("criticidade", "Média")
+                if key in {"fibra", "servicos"}:
+                    criticidade = st.selectbox(
+                        "Criticidade",
+                        CRIT_OPTS,
+                        index=CRIT_OPTS.index(defaults.get("criticidade", "Média")) if defaults.get("criticidade", "Média") in CRIT_OPTS else 1,
+                        key=f"{base_key}__criticidade",
+                    )
+                else:
+                    criticidade = defaults.get("criticidade", "Média")
                 responsavel = (defaults.get("responsavel") or "").strip()
                 equipamento = (defaults.get("equipamento") or "").strip()
                 id_estacao = (defaults.get("id_estacao") or "").strip()
@@ -2921,34 +3210,33 @@ def render_category(name: str, key: str, emoji_icon: str):
                 observacoes = defaults.get("observacoes", "")
             left, right = st.columns([1, 1], gap="large")
             with left:
-                # Não usamos st.form aqui (evita o aviso "Press Ctrl+Enter" e borda vermelha).
                 submit_key = f"{base_key}__submit"
-            _css_button_with_icon(
-                submit_key,
-                icon_b64=None,
-                bg="#0A2A3A",
-                hover_bg="#0B3247",
-                height=54,
-                radius=14,
-                pad_left=24,
-                font_size=16,
-            )
-            submitted = st.button(submit_label, key=submit_key, use_container_width=True)
+                _css_button_with_icon(
+                    submit_key,
+                    icon_b64=None,
+                    bg="#0A2A3A",
+                    hover_bg="#0B3247",
+                    height=54,
+                    radius=14,
+                    pad_left=24,
+                    font_size=16,
+                )
+                submitted = st.button(submit_label, key=submit_key, use_container_width=True)
             with right:
                 cancel_key = f"{base_key}__cancel"
-            _css_button_with_icon(
-                cancel_key,
-                icon_b64=ICON_CANCEL_PNG_B64,
-                bg="#B51D1D",
-                hover_bg="#A01818",
-                height=54,
-                radius=14,
-                pad_left=0,
-                font_size=16,
-                shadow_css="0 10px 24px rgba(181,29,29,.20)",
-            inline_icon=True,
-            )
-            cancel = st.button("Cancelar", key=cancel_key, use_container_width=True, type="secondary")  # PATCH: ícone estável + contraste
+                _css_button_with_icon(
+                    cancel_key,
+                    icon_b64=ICON_CANCEL_PNG_B64,
+                    bg="#B51D1D",
+                    hover_bg="#A01818",
+                    height=54,
+                    radius=14,
+                    pad_left=0,
+                    font_size=16,
+                    shadow_css="0 10px 24px rgba(181,29,29,.20)",
+                    inline_icon=True,
+                )
+                cancel = st.button("Cancelar", key=cancel_key, use_container_width=True, type="secondary")
             if cancel:
                 st.session_state[show_key] = False
                 st.session_state[edit_key] = None
@@ -3026,9 +3314,72 @@ def render_category(name: str, key: str, emoji_icon: str):
             crit_class = badge_crit_class(t.get("criticidade"))
             crit_border_class = ticket_crit_border_class(t.get("criticidade"))
 
-            # Header + actions
-            header_left, header_right = st.columns([9, 1.6], gap="large")
-            with header_right:
+            responsavel_display = (
+                ((t.get("extra") or {}).get("analista") if isinstance(t.get("extra"), dict) else "")
+                or ((t.get("extra") or {}).get("responsavel") if isinstance(t.get("extra"), dict) else "")
+                or (t.get("analista") or "")
+                or (t.get("responsavel") or "")
+                or "-"
+            )
+
+            _status_val = t.get('status', 'Aberto')
+            _extra_val = t.get("extra") or {}
+            _crit_val = (
+                (str(_extra_val.get("criticidade") or "").strip() if isinstance(_extra_val, dict) else "")
+                or (t.get("criticidade") or "")
+                or "Média"
+            )
+            _status_badge = {'aberto':'tkt-badge-open','em andamento':'tkt-badge-progress','fechado':'tkt-badge-closed'}.get(_status_val.lower(),'tkt-badge-open')
+            _crit_badge = {'alta':'tkt-badge-alta','crítica':'tkt-badge-critica','média':'tkt-badge-media','baixa':'tkt-badge-baixa'}.get(_crit_val.lower(),'tkt-badge-media')
+            _tid = f"tkt_{key}_{t['id']}"
+
+            _exp_key = f"exp_{key}_{t['id']}"
+            if _exp_key not in st.session_state:
+                st.session_state[_exp_key] = False
+
+            _toggle_key = f"toggle_{key}_{t['id']}"
+            st.markdown(
+                f"""
+                <div class="tkt-card" style="margin-bottom:8px;">
+                  <div class="tkt-header" style="cursor:pointer;background:#f8fbff;border-bottom:none;padding:12px 16px;">
+                    <div class="tkt-left">
+                      <span class="tkt-arrow {'open' if st.session_state[_exp_key] else ''}">&#9654;</span>
+                      <span class="tkt-num">{t['ticket_number']}</span>
+                      <div class="tkt-badges">
+                        <span class="tkt-badge {_status_badge}">{_status_val.upper()}</span>
+                        <span class="tkt-badge {_crit_badge}">{_crit_val.upper()}</span>
+                      </div>
+                    </div>
+                    <div class="tkt-meta">
+                      <span class="tkt-meta-item">👤 {responsavel_display}</span>
+                      <span class="tkt-meta-item">🕒 {t.get('created_at', '-')}</span>
+                    </div>
+                  </div>
+                </div>
+                <style>
+                .st-key-{_toggle_key} {{
+                  margin-top: -60px !important;
+                  margin-bottom: 0 !important;
+                  position: relative !important;
+                  z-index: 5 !important;
+                }}
+                .st-key-{_toggle_key} button {{
+                  width: 100% !important;
+                  height: 60px !important;
+                  opacity: 0 !important;
+                  border: none !important;
+                  background: transparent !important;
+                  box-shadow: none !important;
+                }}
+                </style>
+                """,
+                unsafe_allow_html=True,
+            )
+            if st.button(" ", key=_toggle_key, use_container_width=True):
+                st.session_state[_exp_key] = not st.session_state[_exp_key]
+                st.rerun()
+
+            if st.session_state[_exp_key]:
                 a1, a2 = st.columns(2, gap="small")
                 with a1:
                     if st.button("✏️", key=f"edit_{key}_{t['id']}", use_container_width=True, help="Editar"):
@@ -3041,36 +3392,6 @@ def render_category(name: str, key: str, emoji_icon: str):
                         if st.session_state.get(edit_key) == t["id"]:
                             st.session_state[edit_key] = None
                         st.rerun()
-
-            with header_left:
-                st.markdown(
-                    f"""
-                    <div class="ticket {crit_border_class}">
-                      <div class="ticket-head">
-                        <div>
-                          <div class="ticket-num">{t["ticket_number"]}</div>
-                          <div class="ticket-meta">
-                            <span>🕒 {t.get("created_at","-")}</span>
-                            <span>👤 {(
-                                  # Preferir o "Analista" específico do ticket (quando existir),
-                                  # antes do responsável do turno (meta) para não virar só a inicial.
-                                  ((t.get("extra") or {}).get("analista") if isinstance(t.get("extra"), dict) else "")
-                                  or ((t.get("extra") or {}).get("responsavel") if isinstance(t.get("extra"), dict) else "")
-                                  or (t.get("analista") or "")
-                                  or (t.get("responsavel") or "")
-                                  or "-"
-                              )}</span>
-                          </div>
-                        </div>
-                        <div class="badges">
-                          <span class="crit-dot {crit_class}" title="Criticidade: {(t.get("criticidade","Média") or "Média")}"></span>
-                          <span class="badge {status_class}">{t.get("status","Aberto")}</span>
-                          <span class="badge {crit_class}">{(t.get("criticidade","Média") or "Média").upper()}</span>
-                        </div>
-                      </div>
-                    """,
-                    unsafe_allow_html=True,
-            )
 
                 # Fields (include extras first if present)
                 fields: List[tuple] = []
@@ -3093,17 +3414,20 @@ def render_category(name: str, key: str, emoji_icon: str):
                     if vv:
                         fields.append((lbl, vv))
 
-                st.markdown('<div class="grid">', unsafe_allow_html=True)
-                for lbl, val in fields:
-                    st.markdown(
-                        f"""
-                        <div class="field">
-                          <div class="flabel">{lbl}</div>
-                          <div class="fvalue">{val}</div>
-                        </div>
-                        """,
-                        unsafe_allow_html=True,
-                    )
+                if fields:
+                    st.markdown('<div class="grid">', unsafe_allow_html=True)
+                    for lbl, val in fields:
+                        st.markdown(
+                            f"""
+                            <div class="field">
+                              <div class="flabel">{lbl}</div>
+                              <div class="fvalue">{val}</div>
+                            </div>
+                            """,
+                            unsafe_allow_html=True,
+                        )
+                    st.markdown("</div>", unsafe_allow_html=True)
+
                 # Chips dinâmicos: exibe apenas campos SIM/NÃO marcados como "Sim" na categoria
                 chips = []
                 for f in CATEGORY_EXTRA_FIELDS.get(nm, []):
@@ -3117,7 +3441,7 @@ def render_category(name: str, key: str, emoji_icon: str):
                     for ch in chips:
                         st.markdown(f'<span class="chip">{ch}</span>', unsafe_allow_html=True)
                     st.markdown("</div>", unsafe_allow_html=True)
-                st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
